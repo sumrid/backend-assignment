@@ -47,4 +47,12 @@ public class Movie {
 	public List<String> getActors() {
 		return actors;
 	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public void setActors(List<String> actors) {
+		this.actors = actors;
+	}
 }

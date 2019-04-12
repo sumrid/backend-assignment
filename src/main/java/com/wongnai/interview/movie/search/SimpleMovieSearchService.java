@@ -5,7 +5,7 @@ import com.wongnai.interview.movie.MovieSearchService;
 import com.wongnai.interview.movie.external.MovieData;
 import com.wongnai.interview.movie.external.MovieDataService;
 import com.wongnai.interview.movie.external.MoviesResponse;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +24,7 @@ public class SimpleMovieSearchService implements MovieSearchService {
 		// All test in SimpleMovieSearchServiceIntegrationTest must pass.
 		// Please do not change @Component annotation on this class
 
-		String queryTextCap = StringUtils.capitalize(queryText);
+		String queryTextCap = WordUtils.capitalizeFully(queryText);
 
 		MoviesResponse result = movieDataService.fetchAll();
 		List<Movie> movies = new ArrayList<>();
