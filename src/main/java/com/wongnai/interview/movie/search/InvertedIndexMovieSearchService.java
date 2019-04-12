@@ -1,14 +1,14 @@
 package com.wongnai.interview.movie.search;
 
-import java.util.List;
-
+import com.wongnai.interview.movie.Movie;
+import com.wongnai.interview.movie.MovieRepository;
+import com.wongnai.interview.movie.MovieSearchService;
+import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
-import com.wongnai.interview.movie.Movie;
-import com.wongnai.interview.movie.MovieRepository;
-import com.wongnai.interview.movie.MovieSearchService;
+import java.util.*;
 
 @Component("invertedIndexMovieSearchService")
 @DependsOn("movieDatabaseInitializer")
@@ -35,6 +35,40 @@ public class InvertedIndexMovieSearchService implements MovieSearchService {
 		// you have to return can be union or intersection of those 2 sets of ids.
 		// By the way, in this assignment, you must use intersection so that it left for just movie id 5.
 
-		return null;
+		return invertedIndex(queryText);
+	}
+
+	private List<Movie> invertedIndex(String queryText) {
+
+		Map<String, HashSet<Long>> invertedIndex = new HashMap<>();
+		for(Movie movie : movieRepository.findAll()) {
+			String[] words = movie.getName().split(" ");
+			for(String word : words){
+				if(!invertedIndex.containsKey(word)) {
+					invertedIndex.put(word, new HashSet<>());
+				}
+				invertedIndex.get(word).add(movie.getId());
+			}
+		}
+
+		// Split query text
+		List<String> queryTexts = Arrays.asList(WordUtils.capitalizeFully(queryText).split(" "));
+		List<Movie> movieResult = new ArrayList<>();
+		HashSet<Long> movieIdSet = new HashSet<>();
+
+		// If query word not match
+		if(invertedIndex.get(queryTexts.get(0)) == null) {
+			return new ArrayList<>();
+		}
+
+		for(String word : queryTexts) {
+			if(movieIdSet.isEmpty()) movieIdSet = invertedIndex.get(word);
+			movieIdSet.retainAll(invertedIndex.get(word));
+		}
+
+		for(long id : movieIdSet){
+			movieResult.add(movieRepository.findById(id));
+		}
+		return movieResult;
 	}
 }

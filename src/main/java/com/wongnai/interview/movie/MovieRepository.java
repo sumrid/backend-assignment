@@ -24,4 +24,6 @@ public interface MovieRepository extends CrudRepository<Movie, Long> {
 	 */
 	@Query("SELECT m FROM Movie m where m.name LIKE %:keyword%")
 	List<Movie> findByNameContains(@Param("keyword") String keyword);
+	List<Movie> findAll();
+	Movie findById(long id);
 }
